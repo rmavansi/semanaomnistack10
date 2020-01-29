@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Dev from '../models/Dev';
 import parseStringAsArray from '../utils/parseStringAsArray';
+import { findConnections, sendMessage } from '../../websocket';
 
 class DevController {
   async store(req, res) {
@@ -33,6 +34,16 @@ class DevController {
       techs: techsArray,
       location
     });
+
+    const sendSocketMessageTo = findConnections(
+      {
+        latitude,
+        longitude
+      },
+      techsArray
+    );
+
+    sendMessage(sendSocketMessageTo, 'newDev', dev);
 
     return res.status(200).json(dev);
   }

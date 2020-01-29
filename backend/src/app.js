@@ -1,6 +1,8 @@
 import express from 'express';
 import Youch from 'youch';
 import cors from 'cors';
+import http from 'http';
+import { setUpWebSocket } from './websocket';
 
 import routes from './routes';
 
@@ -10,9 +12,13 @@ class App {
   constructor() {
     this.server = express();
 
+    const app = http.Server(this.server);
+    setUpWebSocket(app);
+
     this.middlewares();
     this.routes();
     this.exceptionHandler();
+    app.listen(3333);
   }
 
   middlewares() {
